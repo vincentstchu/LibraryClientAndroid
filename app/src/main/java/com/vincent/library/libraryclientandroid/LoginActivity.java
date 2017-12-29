@@ -24,7 +24,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText logPswdText;
     private Button btnLogin;
     private Button btnRegist;
-    private String murl = "http://192.168.1.107:8080/ManagementDemo/ManageDemo";
+    //private String murl = "http://192.168.1.107:8080/ManagementDemo/ManageDemo";
+    private String murl = "http://120.78.135.143:8080/ManagementDemo/ManageDemo";
     private Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,12 @@ public class LoginActivity extends AppCompatActivity {
                 attemptLogin();
                 //Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                 //startActivity(intent);
+            }
+        });
+        btnRegist.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, RegActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -99,7 +106,10 @@ public class LoginActivity extends AppCompatActivity {
                 Toastinthread(str);
                 if(res.equals("0xA1")){
                     Intent intent = new Intent(context,MainActivity.class);
+                    //String[] userinfo={logname,logpswd};
+                    intent.putExtra("userinfo",logname);
                     startActivity(intent);
+                    finish();
                 }
             }
         });

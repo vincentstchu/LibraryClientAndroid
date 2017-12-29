@@ -14,6 +14,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.activity.CaptureActivity;
@@ -26,7 +28,7 @@ public class MainActivity extends AppCompatActivity
     //扫描成功返回码
     private int RESULT_OK = 0xA1;
     private Context context;
-
+    private String userName="aaaaa";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         context = this;
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,6 +53,22 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        /*===================================================================
+        注意mNameText是在navigationView的HeaderView里面的，所以不能直接使用
+            TextView mName = (TextView) findViewById(R.id.mNameText);
+        首先要 将HeaderView和navheader绑定，让后指定navheader下的mNameText。
+        不然的话，默认的View是当前布局的activity_main的View,是找不到mNameText。
+       ======================================================================*/
+
+        View navheader = navigationView.getHeaderView(0);
+        TextView mName = (TextView) navheader.findViewById(R.id.mNameText);
+        Intent intent = getIntent();
+        if(intent!=null)
+        {
+            userName = intent.getStringExtra("userinfo");//获取用户信息
+            Toast.makeText(this,userName,Toast.LENGTH_LONG).show();
+            mName.setText(userName);
+        }    
         navigationView.setNavigationItemSelectedListener(this);
     }
 
