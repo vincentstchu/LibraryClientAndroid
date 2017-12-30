@@ -29,11 +29,18 @@
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".RegActivity"
+        <activity
+            android:name=".RegActivity"
             android:label="注册"
-            android:theme="@style/RegTheme"/>
+            android:theme="@style/RegTheme" />
 
-        <!--</activity>-->
+        <!-- </activity> -->
+        <activity
+            android:name=".SmilePlzActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_smile_plz"
+            android:theme="@style/FullscreenTheme" />
+        <activity android:name=".InformActivity"></activity>
     </application>
 
 </manifest>

@@ -1,8 +1,11 @@
 package com.vincent.library.libraryclientandroid;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -122,6 +125,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
+            Intent intent = new Intent(MainActivity.this, InformActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_send) {
 
@@ -135,12 +140,21 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //扫描结果回调
-        if (resultCode == RESULT_OK) { //RESULT_OK = -1
-            Bundle bundle = data.getExtras();
-            String scanResult = bundle.getString("qr_scan_result");
-            //将扫描出的信息显示出来
-            Toast.makeText(context,scanResult,Toast.LENGTH_SHORT).show();
+        switch(requestCode){
+            case 0x01:
+                if (resultCode == RESULT_OK) { //RESULT_OK = -1
+                    Bundle bundle = data.getExtras();
+                    String scanResult = bundle.getString("qr_scan_result");
+                    //将扫描出的信息显示出来
+                    Toast.makeText(context,scanResult,Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+            default:
+                break;
+
         }
+
     }
 
 }

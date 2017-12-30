@@ -7,9 +7,14 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="regist_username">用户名</string>
     <string name="reck_password">确认密码</string>
+    <string name="msgsend_button_text">发送</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="title_activity_smile_plz">SmilePlzActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
