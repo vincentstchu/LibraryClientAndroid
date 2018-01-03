@@ -123,6 +123,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
+            //Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            finish();
 
         } else if (id == R.id.nav_share) {
             Intent intent = new Intent(MainActivity.this, InformActivity.class);
