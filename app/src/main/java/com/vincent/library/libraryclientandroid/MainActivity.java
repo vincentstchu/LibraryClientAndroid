@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+            // 二维码扫描
             Intent intent = new Intent(MainActivity.this, CaptureActivity.class);
             startActivityForResult(intent, REQUEST_CODE);
 
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
-            //推出登录并注销
+            //退出登录并注销
             //Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             SharedPreferences sprfMain = getSharedPreferences("config",0);
             SharedPreferences.Editor editor = sprfMain.edit();
@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity
             finish();
 
         } else if (id == R.id.nav_share) {
+            //开启监督举报功能
             Intent intent = new Intent(MainActivity.this, InformActivity.class);
             startActivity(intent);
 

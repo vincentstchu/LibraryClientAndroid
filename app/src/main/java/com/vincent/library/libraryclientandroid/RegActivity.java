@@ -22,15 +22,16 @@ import okhttp3.ResponseBody;
 
 public class RegActivity extends AppCompatActivity {
 
-    private final String REG_SUCC="0xB0";
-    private final String REG_NAME_SAME="0xB1";
+    private final String REG_SUCC="0xB1";
+    private final String REG_NAME_SAME="0xB2";
 
     private EditText regNameText;
     private EditText regPswdText;
     private EditText regPsCkText;
     private Button regCkBtn;
     private Context context;
-    private String murl = "http://192.168.1.107:8080/ManagementDemo/RegUser";
+//    private String murl = "http://192.168.1.107:8080/ManagementDemo/RegUser";
+    private String murl = "http://192.168.1.107:8080/Regist";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,20 +44,27 @@ public class RegActivity extends AppCompatActivity {
         regCkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptRig(regNameText.getText().toString(),
-                        regPswdText.getText().toString());
+                String name = regNameText.getText().toString();
+                String passwd1 = regPswdText.getText().toString();
+                String passwd2 = regPsCkText.getText().toString();
+                if(!checkPswd(passwd1, passwd2))
+                    Toast.makeText(context,"密码不一致",Toast.LENGTH_LONG).show();
+                else if(!chekName(name))
+                    Toast.makeText(context,"用户名太长",Toast.LENGTH_LONG).show();
+                else
+                    attemptReg(name, passwd1);
             }
         });
     }
 
-    private Boolean checkPswd(String pswd1, String pswd2) {
+    private boolean checkPswd(String pswd1, String pswd2) {
         if(pswd1.equals(pswd2))
-            return Boolean.TRUE;
-        return Boolean.FALSE;
+            return true;
+        return false;
     }
 
-    private Boolean chekName(String name) {
-        if(regNameText.getText().toString().equals(name))
+    private boolean chekName(String name) {
+        if(regNameText.getText().toString().length() < 17)
             return Boolean.TRUE;
         return Boolean.FALSE;
     }
@@ -71,12 +79,12 @@ public class RegActivity extends AppCompatActivity {
         });
     }
 
-    private void attemptRig(String name, String password) {
+    private void attemptReg(String name, String password) {
         Toast.makeText(RegActivity.this,name+" "+password, Toast.LENGTH_SHORT).show();
         OkHttpClient client = new OkHttpClient();
         RequestBody body = new FormBody.Builder()
                 .add("username",name)
-                .add("userpassword",password)
+                .add("userpasswd",password)
                 .build();
         Request request = new Request.Builder().url(murl).post(body).build();
         Call call = client.newCall(request);

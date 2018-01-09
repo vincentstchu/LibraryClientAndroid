@@ -28,7 +28,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin;
     private Button btnRegist;
     //private String murl = "http://192.168.1.107:8080/ManagementDemo/ManageDemo";
-    private String murl = "http://120.78.135.143:8080/ManagementDemo/ManageDemo";
+//    private String murl = "http://120.78.135.143:8080/ManagementDemo/ManageDemo";
+    private String murl = "http://192.168.1.107:8080/Login";
     private Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,9 +92,9 @@ public class LoginActivity extends AppCompatActivity {
         final String logpswd = logPswdText.getText().toString();
         OkHttpClient client = new OkHttpClient();
         RequestBody body = new FormBody.Builder()
-                .add("operation","loglet")
+//                .add("operation","loglet")
                 .add("username",logname)
-                .add("password", logpswd)
+                .add("userpasswd", logpswd)
                 .build();
         Request request = new Request.Builder().url(murl).post(body).build();
         Call call = client.newCall(request);
@@ -117,10 +118,10 @@ public class LoginActivity extends AppCompatActivity {
                         str = "登录成功";
                         break;
                     case "0xA2":
-                        str = "密码错误";
+                        str = "用户不存在";
                         break;
                     case "0xA3":
-                        str = "用户不存在";
+                        str = "密码错误";
                         break;
                     default:
                         str = "未知错误";
