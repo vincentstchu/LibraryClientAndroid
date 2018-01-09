@@ -3,8 +3,10 @@ package com.vincent.library.libraryclientandroid;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -123,7 +125,12 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
+            //推出登录并注销
             //Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            SharedPreferences sprfMain = getSharedPreferences("config",0);
+            SharedPreferences.Editor editor = sprfMain.edit();
+            editor.putString("logName","");
+            editor.commit();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
 

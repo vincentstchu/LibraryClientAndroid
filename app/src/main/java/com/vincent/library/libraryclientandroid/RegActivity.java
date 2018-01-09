@@ -18,8 +18,13 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class RegActivity extends AppCompatActivity {
+
+    private final String REG_SUCC="0xB0";
+    private final String REG_NAME_SAME="0xB1";
+
     private EditText regNameText;
     private EditText regPswdText;
     private EditText regPsCkText;
@@ -70,8 +75,8 @@ public class RegActivity extends AppCompatActivity {
         Toast.makeText(RegActivity.this,name+" "+password, Toast.LENGTH_SHORT).show();
         OkHttpClient client = new OkHttpClient();
         RequestBody body = new FormBody.Builder()
-                .add("regname",name)
-                .add("regpassword",password)
+                .add("username",name)
+                .add("userpassword",password)
                 .build();
         Request request = new Request.Builder().url(murl).post(body).build();
         Call call = client.newCall(request);
@@ -83,10 +88,17 @@ public class RegActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Toastinthread("注册成功");
-                Intent intent = new Intent(context,LoginActivity.class);
-                startActivity(intent);
-                finish();
+                if(response.body().string().equals(REG_SUCC)) {
+                    Toastinthread("注册成功！");
+                    Intent intent = new Intent(context,LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+                else if(response.body().string().equals(REG_NAME_SAME))
+                    Toastinthread("用户名已经存在！");
+                else
+                    Toastinthread("未知错误！");
+
             }
         });
 
