@@ -23,7 +23,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.google.zxing.activity.CaptureActivity;
+
+import java.io.File;
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -34,6 +46,7 @@ public class MainActivity extends AppCompatActivity
     private int RESULT_OK = 0xA1;
     private Context context;
     private String userName="aaaaa";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,8 +59,10 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                Intent intent = new Intent(MainActivity.this, CaptureActivity.class);
+                startActivityForResult(intent, REQUEST_CODE);
             }
         });
 
@@ -119,8 +134,9 @@ public class MainActivity extends AppCompatActivity
             // 二维码扫描
             Intent intent = new Intent(MainActivity.this, CaptureActivity.class);
             startActivityForResult(intent, REQUEST_CODE);
-
         } else if (id == R.id.nav_gallery) {
+            Intent intent = new Intent(MainActivity.this, OrderActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_slideshow) {
 
@@ -138,11 +154,7 @@ public class MainActivity extends AppCompatActivity
             //开启监督举报功能
             Intent intent = new Intent(MainActivity.this, InformActivity.class);
             startActivity(intent);
-
-        } else if (id == R.id.nav_send) {
-
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -158,6 +170,7 @@ public class MainActivity extends AppCompatActivity
                     String scanResult = bundle.getString("qr_scan_result");
                     //将扫描出的信息显示出来
                     Toast.makeText(context,scanResult,Toast.LENGTH_SHORT).show();
+                    attemptSignIn(userName,scanResult);
                 }
                 break;
 
@@ -166,6 +179,49 @@ public class MainActivity extends AppCompatActivity
 
         }
 
+    }
+
+    private void Toastinthread(String str) {
+        final String s = str;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MainActivity.this,s, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void attemptSignIn(String sid, String str) {
+        //提取子串，rid&seNum
+        String rid = org.apache.commons.lang3.StringUtils.substringBefore(str,"&");
+        String seNum = org.apache.commons.lang3.StringUtils.substringAfter(str,"&");
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new FormBody.Builder()
+                .add("sid",sid)
+                .add("rid",rid)
+                .add("seNum",seNum)
+                .build();
+        Request request = new Request.Builder()
+                .url("http://192.168.1.107:8060/api/signIn")
+                .post(requestBody)
+                .build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Toastinthread("失败1");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                com.alibaba.fastjson.JSONObject res = JSON.parseObject(response.body().string());
+               if(res.getString("code").equals("200")){
+                    Toastinthread("成功");
+                } else {
+                   Toastinthread(res.getString("message"));
+                }
+            }
+        });
     }
 
 }

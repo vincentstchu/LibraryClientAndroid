@@ -12,6 +12,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 import okhttp3.Call;
@@ -22,6 +26,10 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import com.alibaba.fastjson.*;
+/*
+* 登录界面
+* */
 public class LoginActivity extends AppCompatActivity {
     private EditText logNameText;
     private EditText logPswdText;
@@ -29,7 +37,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnRegist;
     //private String murl = "http://192.168.1.107:8080/ManagementDemo/ManageDemo";
 //    private String murl = "http://120.78.135.143:8080/ManagementDemo/ManageDemo";
-    private String murl = "http://192.168.1.107:8080/Login";
+ //   private String murl = "http://192.168.1.107:8080/Login";
+    private String murl = "http://192.168.1.107:8060/login/toLogin";
     private Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,10 +100,16 @@ public class LoginActivity extends AppCompatActivity {
         final String logname = logNameText.getText().toString();
         final String logpswd = logPswdText.getText().toString();
         OkHttpClient client = new OkHttpClient();
-        RequestBody body = new FormBody.Builder()
-//                .add("operation","loglet")
+        /*对应vincentsthcu创建的服务器端
+        * RequestBody body = new FormBody.Builder()
                 .add("username",logname)
                 .add("userpasswd", logpswd)
+                .build();
+        *
+        * */
+        RequestBody body = new FormBody.Builder()
+                .add("sid",logname)
+                .add("psw", logpswd)
                 .build();
         Request request = new Request.Builder().url(murl).post(body).build();
         Call call = client.newCall(request);
@@ -107,10 +122,15 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this,"服务器无响应", Toast.LENGTH_SHORT).show();
                     }
                 });
+                Intent intent = new Intent(context,MainActivity.class);
+                intent.putExtra("userinfo",logname);
+                startActivity(intent);
+                finish();
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                /*对应vincentsthcu创建的服务器，接收服务器相应并跳转页面
                 String res = response.body().string();
                 String str;
                 switch(res) {
@@ -129,6 +149,18 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 Toastinthread(str);
                 if(res.equals("0xA1")){
+                    saveActivityPreferences();
+                    Intent intent = new Intent(context,MainActivity.class);
+                    //String[] userinfo={logname,logpswd};
+                    intent.putExtra("userinfo",logname);
+                    startActivity(intent);
+                    finish();
+                }
+                *
+                * */
+                com.alibaba.fastjson.JSONObject res = JSON.parseObject(response.body().string());
+                CommonUtils.ShowError(res.getString("code"),LoginActivity.this);
+                if(res.getString("code").equals("200")){
                     saveActivityPreferences();
                     Intent intent = new Intent(context,MainActivity.class);
                     //String[] userinfo={logname,logpswd};

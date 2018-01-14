@@ -9,6 +9,11 @@
     <string name="reck_password">确认密码</string>
     <string name="msgsend_button_text">发送</string>
 
+    <string name="main_activity_label">预约助手</string>
+    <string name="inform_toolbar_label">意见反馈</string>
+
+    <string name="order_toolbar_roomchoose">阅览室选择</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
