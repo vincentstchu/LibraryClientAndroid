@@ -23,16 +23,12 @@
 
     <TextView
         android:id="@+id/mNameText"
-        android:layout_width="270dp"
-        android:layout_height="wrap_content"
+        android:layout_width="191dp"
+        android:layout_height="44dp"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="Android Studio"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="android.studio@android.com" />
+        android:textAlignment="viewStart"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="14sp" />
 
 </LinearLayout>

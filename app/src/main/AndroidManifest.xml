@@ -43,7 +43,10 @@
             android:theme="@style/FullscreenTheme" />
         <activity android:name=".InformActivity" />
         <activity android:name=".OrderActivity" />
-        <activity android:name=".Order2Activity"></activity>
+        <activity android:name=".Order2Activity" />
+        <activity android:name=".Order3Activity" />
+        <activity android:name=".ConversationActivity" />
+        <activity android:name=".RecordActivity"></activity>
     </application>
 
 </manifest>

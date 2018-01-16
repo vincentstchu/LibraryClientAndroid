@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/roomFloor"
+        android:layout_width="37dp"
+        android:layout_height="44dp"
+        android:layout_weight="1"
+        android:background="@color/colorGray"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/roomName"
+        android:layout_width="226dp"
+        android:layout_height="140dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:outlineProvider="background"
+        android:singleLine="false"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textSize="36sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/seatLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@android:dimen/app_icon_size"
+        android:layout_weight="1"
+        android:text="TextView"
+        android:textAlignment="center" />
+</LinearLayout>

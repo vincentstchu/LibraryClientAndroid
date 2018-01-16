@@ -35,10 +35,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText logPswdText;
     private Button btnLogin;
     private Button btnRegist;
-    //private String murl = "http://192.168.1.107:8080/ManagementDemo/ManageDemo";
-//    private String murl = "http://120.78.135.143:8080/ManagementDemo/ManageDemo";
- //   private String murl = "http://192.168.1.107:8080/Login";
-    private String murl = "http://192.168.1.107:8060/login/toLogin";
+    private String murl = "http://192.168.43.150:8060/login/toLogin";
     private Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +62,6 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     attemptLogin();
-                    //Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-                    //startActivity(intent);
                 }
             });
             btnRegist.setOnClickListener(new View.OnClickListener() {
@@ -100,13 +95,6 @@ public class LoginActivity extends AppCompatActivity {
         final String logname = logNameText.getText().toString();
         final String logpswd = logPswdText.getText().toString();
         OkHttpClient client = new OkHttpClient();
-        /*对应vincentsthcu创建的服务器端
-        * RequestBody body = new FormBody.Builder()
-                .add("username",logname)
-                .add("userpasswd", logpswd)
-                .build();
-        *
-        * */
         RequestBody body = new FormBody.Builder()
                 .add("sid",logname)
                 .add("psw", logpswd)
@@ -130,34 +118,6 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                /*对应vincentsthcu创建的服务器，接收服务器相应并跳转页面
-                String res = response.body().string();
-                String str;
-                switch(res) {
-                    case "0xA1":
-                        str = "登录成功";
-                        break;
-                    case "0xA2":
-                        str = "用户不存在";
-                        break;
-                    case "0xA3":
-                        str = "密码错误";
-                        break;
-                    default:
-                        str = "未知错误";
-                        break;
-                }
-                Toastinthread(str);
-                if(res.equals("0xA1")){
-                    saveActivityPreferences();
-                    Intent intent = new Intent(context,MainActivity.class);
-                    //String[] userinfo={logname,logpswd};
-                    intent.putExtra("userinfo",logname);
-                    startActivity(intent);
-                    finish();
-                }
-                *
-                * */
                 com.alibaba.fastjson.JSONObject res = JSON.parseObject(response.body().string());
                 CommonUtils.ShowError(res.getString("code"),LoginActivity.this);
                 if(res.getString("code").equals("200")){

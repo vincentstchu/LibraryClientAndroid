@@ -1,11 +1,14 @@
 package com.vincent.library.libraryclientandroid;
 
 import android.app.Activity;
+import android.content.AsyncQueryHandler;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -25,9 +28,16 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.google.zxing.activity.CaptureActivity;
+import com.vincent.library.model.Record;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -46,14 +56,21 @@ public class MainActivity extends AppCompatActivity
     private int RESULT_OK = 0xA1;
     private Context context;
     private String userName="aaaaa";
-
+    private TextView mStatus;
+    private TextView mainDate;
+    private String nowDate;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         context = this;
+
+        mStatus = (TextView) findViewById(R.id.mStatusText);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -86,10 +103,50 @@ public class MainActivity extends AppCompatActivity
         if(intent!=null)
         {
             userName = intent.getStringExtra("userinfo");//获取用户信息
-            Toast.makeText(this,userName,Toast.LENGTH_LONG).show();
             mName.setText(userName);
-        }    
+        }
+
+        //获取用户id
+        SharedPreferences sharedPreferences = getSharedPreferences("config",0);
+        userName = sharedPreferences.getString("logName","");
+        mName.setText("  ID： "+userName);
+
+        //设置日历时间
+        setNowDate();
+        mainDate = (TextView) findViewById(R.id.mainDate);
+        mainDate.setText(nowDate);
+
         navigationView.setNavigationItemSelectedListener(this);
+
+        //刷新用户状态
+        refreshState();
+
+        //子线程，每隔一分钟刷新一次用户状态
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    try {
+                        Thread.sleep(60000);
+                        refreshState();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+
+    }
+
+
+    private  void setNowDate() {
+        // 获取日历的一个对象
+        Calendar calendar = Calendar.getInstance();
+        // 获取年月日时分秒的信息
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH)+1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        nowDate = String.format("%4d"+"-"+"%02d"+"-"+"%02d",year,month,day);
     }
 
     @Override
@@ -118,6 +175,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            refreshState();
             return true;
         }
 
@@ -139,6 +197,8 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
 
         } else if (id == R.id.nav_slideshow) {
+            Intent intent = new Intent(MainActivity.this, RecordActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_manage) {
             //退出登录并注销
@@ -181,15 +241,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void Toastinthread(String str) {
-        final String s = str;
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(MainActivity.this,s, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     private void attemptSignIn(String sid, String str) {
         //提取子串，rid&seNum
@@ -209,19 +260,99 @@ public class MainActivity extends AppCompatActivity
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                Toastinthread("失败1");
+                Intent it = new Intent(MainActivity.this,ConversationActivity.class);
+                String[] msg = {"服务器无响应","0"};
+                it.putExtra("message",msg);
+                startActivity(it);
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 com.alibaba.fastjson.JSONObject res = JSON.parseObject(response.body().string());
                if(res.getString("code").equals("200")){
-                    Toastinthread("成功");
+                   Intent it = new Intent(MainActivity.this,ConversationActivity.class);
+                   String[] msg = {"签到成功","1"};
+                   it.putExtra("message",msg);
+                   startActivity(it);
                 } else {
-                   Toastinthread(res.getString("message"));
+                   Intent it = new Intent(MainActivity.this,ConversationActivity.class);
+                   String[] msg = {res.getString("message"),"0"};
+                   it.putExtra("message",msg);
+                   startActivity(it);
                 }
             }
         });
     }
 
+    private void refreshState() {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = new FormBody.Builder()
+                .add("sid",userName)
+                .build();
+        final Request request = new Request.Builder()
+                .url("http://192.168.43.150:8060/record/getRecord")
+                .post(body)
+                .build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mStatus.setText("查询用户状态失败");
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String str = response.body().string();
+                final com.alibaba.fastjson.JSONObject jobj = JSON.parseObject(str);
+                if(jobj.getInteger("code").equals(200))
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+//                            Toast.makeText(MainActivity.this,"查询用户状态", Toast.LENGTH_SHORT).show();
+                            mStatus.setText(getRecordOfToday(jobj));
+                        }
+                    });
+            }
+        });
+    }
+
+    private String getRecordOfToday(com.alibaba.fastjson.JSONObject jobj) {
+
+        // 获取日历的一个对象
+        Calendar calendar = Calendar.getInstance();
+        // 获取年月日时分秒的信息
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH)+1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        String date = String.format("%4d"+"-"+"%02d"+"-"+"%02d",year,month,day);
+        String str;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        if (jobj.getString("code").equals("200")) {
+            com.alibaba.fastjson.JSONArray jsonArray = jobj.getJSONArray("data");
+            for (int i = 0; i < jsonArray.size(); i++) {
+                if (sdf.format(jsonArray.getJSONObject(i).getDate("date")).equals(date)) {
+                    String floor = jsonArray.getJSONObject(i).
+                            getJSONObject("readingRoom").getString("floor");
+                    String room = jsonArray.getJSONObject(i).
+                            getJSONObject("readingRoom").getString("room");
+                    String seatNum = jsonArray.getJSONObject(i).getString("seatNum");
+                    String times = jsonArray.getJSONObject(i).getString("times");
+                    str = "今日 "+floor+"  "+room+"\n座位号: "
+                            +seatNum+"\n时间: "
+                            +times + "\n签到状态：";
+                    String s = "未签到";
+                    if(jsonArray.getJSONObject(i).getInteger("state").equals(1))
+                        s="已签到";
+                    return str+s;
+                }
+            }
+
+        }
+        return "无预约座位";
+    }
 }

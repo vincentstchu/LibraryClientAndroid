@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#3f51b5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#ff4081</color>
     <color name="colorBalck">#000000</color>
     <color name="colorGray">#4d4d4d</color>
     <color name="colorGray2">#363636</color>
@@ -12,7 +12,7 @@
     <color name="viewfinder_frame">#90ffffff</color>
     <color name="result_point_color">#c0ffff00</color>
     <color name="laser_color">#0F0</color>
-    <color name="corner_color">#00FF00</color>
+    <color name="corner_color">#00ff00</color>
 
     <color name="black_overlay">#66000000</color>
 

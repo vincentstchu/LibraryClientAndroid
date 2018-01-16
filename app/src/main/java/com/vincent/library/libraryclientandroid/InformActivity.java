@@ -83,6 +83,10 @@ public class InformActivity extends AppCompatActivity {
                 {
                     //send picture and text;
                     attemptSendMessage(currentImgFile);
+                    Intent it = new Intent(InformActivity.this,ConversationActivity.class);
+                    String[] msg = {"图文发送成功","1"};
+                    it.putExtra("message",msg);
+                    startActivity(it);
                 }
                 else {
                     Toast.makeText(InformActivity.this,"图片不存在",Toast.LENGTH_LONG).show();

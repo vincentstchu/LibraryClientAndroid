@@ -24,6 +24,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
     compile 'com.squareup.okhttp3:okhttp:3.9.1'
+    compile group: 'com.alibaba', name: 'fastjson', version: '1.2.44'
     compile group: 'com.google.zxing', name: 'core', version: '3.3.1'
     compile group: 'com.alibaba', name: 'fastjson', version: '1.2.44'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
