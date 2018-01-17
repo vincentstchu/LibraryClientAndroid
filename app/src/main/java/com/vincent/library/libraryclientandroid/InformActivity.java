@@ -142,10 +142,12 @@ public class InformActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 com.alibaba.fastjson.JSONObject res = JSON.parseObject(response.body().string());
                 Toastinthread(res.getString("code")+"  "+res.getString("message"));
-                Intent it = new Intent(InformActivity.this,ConversationActivity.class);
-                String[] msg = {"图文发送成功","1"};
-                it.putExtra("message",msg);
-                startActivity(it);
+                if(res.getInteger("code").equals(200)) {
+                    Intent it = new Intent(InformActivity.this, ConversationActivity.class);
+                    String[] msg = {"图文发送成功", "1"};
+                    it.putExtra("message", msg);
+                    startActivity(it);
+                }
             }
         });
     }
