@@ -22,4 +22,13 @@
     <string name="title_activity_smile_plz">SmilePlzActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="main_statement">系统声明\n
+        点击蓝色相机按钮即可扫码签到\n
+        侧栏还有更多功能\n
+        此应用在android5.0上开发，在7.0上会有一些兼容问题\n
+        另外，在7.0上需要手动赋予摄像头权限\n
+        vincentstchu 2018.1.16
+    </string>
+
 </resources>

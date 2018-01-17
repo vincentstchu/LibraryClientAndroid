@@ -11,6 +11,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -52,7 +54,21 @@ public class OrderActivity extends AppCompatActivity {
         orderNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                boolean flag = true;
                 orderDate = String.format("%4d"+"-"+"%02d"+"-"+"%02d",dp.getYear(),dp.getMonth()+1,dp.getDayOfMonth());
+                SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd");
+                try {
+                    Date sdate = sdf.parse(orderDate);
+                    Date now = sdf.parse(sdf.format(new Date()));
+                    Toast.makeText(OrderActivity.this,"sdate:"+Long.toString(sdate.getTime())+
+                            "\ntime"+Long.toString(now.getTime()),Toast.LENGTH_LONG).show();
+                    if(sdate.getTime()<now.getTime()) {
+                        flag = false;
+
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 orderTime = "";
                 if(cMorning.isChecked())
                     orderTime=orderTime+"morning,";
@@ -60,10 +76,18 @@ public class OrderActivity extends AppCompatActivity {
                     orderTime=orderTime+"afternoon,";
                 if(cNight.isChecked())
                     orderTime=orderTime+"night,";
-                Intent intent = new Intent(OrderActivity.this,Order2Activity.class);
-                String[] timeinfo = {orderDate,orderTime};
-                intent.putExtra("timeinfo",timeinfo);
-                startActivity(intent);
+                if(orderTime.equals(""))
+                    flag = false;
+                if(flag) {
+                    orderDate = orderDate.substring(0,orderDate.length()-1);
+                    Intent intent = new Intent(OrderActivity.this,Order2Activity.class);
+                    String[] timeinfo = {orderDate,orderTime};
+                    intent.putExtra("timeinfo",timeinfo);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(OrderActivity.this,"请选择正确的时间",Toast.LENGTH_LONG).show();
+                }
+
             }
         });
 

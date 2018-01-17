@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:buttonTint="@android:color/holo_blue_light"
-            android:text="上午" />
+            android:text="上午(8:00 ~ 12:00)" />
 
         <CheckBox
             android:id="@+id/checkAfternoon"
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:buttonTint="@android:color/holo_blue_light"
-            android:text="下午" />
+            android:text="下午(12:00 ~ 17:00)" />
 
         <CheckBox
             android:id="@+id/checkNight"
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:buttonTint="@android:color/holo_blue_light"
-            android:text="晚上" />
+            android:text="晚上(17:00 ~ 22:00)" />
 
     </LinearLayout>
 

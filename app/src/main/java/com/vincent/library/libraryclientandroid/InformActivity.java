@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -69,9 +71,15 @@ public class InformActivity extends AppCompatActivity {
                 if(!dir.exists()) {
                     dir.mkdirs();
                 }
+
                 currentImgFile = new File(dir,System.currentTimeMillis()+".jpg");
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(currentImgFile));
+                if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N) {
+                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    Uri contentUri = FileProvider.getUriForFile(InformActivity.this,"com.vincent.library.fileprovider",currentImgFile);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
+                } else
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(currentImgFile));
                 startActivityForResult(intent, 0x01);
             }
         });
@@ -83,10 +91,7 @@ public class InformActivity extends AppCompatActivity {
                 {
                     //send picture and text;
                     attemptSendMessage(currentImgFile);
-                    Intent it = new Intent(InformActivity.this,ConversationActivity.class);
-                    String[] msg = {"图文发送成功","1"};
-                    it.putExtra("message",msg);
-                    startActivity(it);
+
                 }
                 else {
                     Toast.makeText(InformActivity.this,"图片不存在",Toast.LENGTH_LONG).show();
@@ -137,11 +142,11 @@ public class InformActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 com.alibaba.fastjson.JSONObject res = JSON.parseObject(response.body().string());
                 Toastinthread(res.getString("code")+"  "+res.getString("message"));
+                Intent it = new Intent(InformActivity.this,ConversationActivity.class);
+                String[] msg = {"图文发送成功","1"};
+                it.putExtra("message",msg);
+                startActivity(it);
             }
         });
-
-
-
     }
-
 }
